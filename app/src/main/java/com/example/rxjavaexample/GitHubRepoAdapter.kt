@@ -11,7 +11,7 @@ import java.util.ArrayList
 import io.reactivex.annotations.Nullable
 
 /**
- * Created by emb-sadabir on 15/3/18.
+ * Created by emb-sadabir on 28/5/18.
  */
 
 class GitHubRepoAdapter : RecyclerView.Adapter<GitHubRepoAdapter.GitHubRepoViewHolder>() {
@@ -32,6 +32,11 @@ class GitHubRepoAdapter : RecyclerView.Adapter<GitHubRepoAdapter.GitHubRepoViewH
         holder.textRepoName.text = gitHubRepo.name
         holder.textRepoUrl.text = gitHubRepo.html_url
         holder.textLanguage.text = "Language: " + gitHubRepo.language
+        if(position == gitHubRepos.size - 1){
+            holder.divider.visibility = View.GONE
+        } else {
+            holder.divider.visibility = View.VISIBLE
+        }
     }
 
     fun setGitHubRepos(@Nullable repos: List<GitHubRepo>?) {
@@ -50,7 +55,7 @@ class GitHubRepoAdapter : RecyclerView.Adapter<GitHubRepoAdapter.GitHubRepoViewH
         val textRepoName: TextView = view.findViewById(R.id.text_repo_name)
         val textRepoUrl: TextView = view.findViewById(R.id.text_repo_url)
         val textLanguage: TextView = view.findViewById(R.id.text_language)
-
+        val divider : View = view.findViewById(R.id.divider)
     }
 }
 

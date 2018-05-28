@@ -5,7 +5,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 
 /**
- * Created by emb-sadabir on 15/3/18.
+ * Created by emb-sadabir on 28/5/18.
  */
 
 interface GitHubService {

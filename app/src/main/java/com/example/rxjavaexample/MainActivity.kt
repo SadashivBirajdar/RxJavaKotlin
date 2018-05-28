@@ -1,25 +1,18 @@
 package com.example.rxjavaexample
 
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import butterknife.BindView
-import butterknife.ButterKnife
-
+import android.widget.Toast
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_main.*
 
-
-/**
- * Created by emb-sadabir on 15/3/18.
- */
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,25 +20,25 @@ class MainActivity : AppCompatActivity() {
         val TAG = MainActivity::class.java.simpleName!!
     }
 
-    private val adapter = GitHubRepoAdapter()
-
-    @BindView(R.id.edit_text_username)
-    private var editTextUsername: EditText? = null
-    @BindView(R.id.button_search)
-    private var buttonSearch: Button? = null
-    @BindView(R.id.list_view_repos)
-    private var recyclerView: RecyclerView? = null
+    private val gitHubRepoAdapter = GitHubRepoAdapter()
+    private lateinit var dialog : ProgressDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        ButterKnife.bind(this)
-        recyclerView?.layoutManager = LinearLayoutManager(this)
-        recyclerView?.adapter = adapter
 
-        buttonSearch?.setOnClickListener {
-            val username = editTextUsername?.text.toString()
+        dialog = ProgressDialog(this)
+        dialog.setMessage("Please wait")
+        dialog.setTitle("Loading")
+        dialog.setCancelable(false)
+
+        list_view_repos.layoutManager = LinearLayoutManager(this)
+        list_view_repos.adapter = gitHubRepoAdapter
+
+        button_search.setOnClickListener{
+            val username = edit_text_username.text.toString()
             if (!TextUtils.isEmpty(username)) {
+                dialog.show()
                 getStarredRepos(username)
             }
         }
@@ -59,9 +52,11 @@ class MainActivity : AppCompatActivity() {
                 .subscribe(object : Observer<List<GitHubRepo>> {
 
                     override fun onError(e: Throwable) {
-                        adapter.setGitHubRepos(null)
+                        dialog.dismiss()
+                        gitHubRepoAdapter.setGitHubRepos(null)
                         e.printStackTrace()
                         Log.d(TAG, "In onError()")
+                        Toast.makeText(this@MainActivity, e.localizedMessage, Toast.LENGTH_SHORT).show()
                     }
 
 
@@ -74,8 +69,9 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     override fun onNext(gitHubRepos: List<GitHubRepo>) {
+                        dialog.dismiss()
                         Log.d(TAG, "In onNext()")
-                        adapter.setGitHubRepos(gitHubRepos)
+                        gitHubRepoAdapter.setGitHubRepos(gitHubRepos)
                     }
                 })
     }

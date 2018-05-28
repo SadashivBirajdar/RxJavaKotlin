@@ -10,7 +10,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 /**
- * Created by emb-sadabir on 15/3/18.
+ * Created by emb-sadabir on 28/5/18.
  */
 
 class RestClient private constructor() {
